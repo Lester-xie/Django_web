@@ -1,0 +1,13 @@
+{% block content %}
+    <h1>Topics：</h1>
+    <ul>
+        {% for topic in topics %}
+        <li>
+            <a href="{% url 'learning_logs:topics' topic.id %}">{{ topic }}</a>
+        </li>
+        {% empty %}
+            <li>There are no entries for this topic yet.</li>
+        {% endfor %}
+    </ul>
+    <a href="{% url 'learning_logs:new_topic' %}">Add a new topic:</a>
+{% endblock content %}
