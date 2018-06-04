@@ -4,24 +4,28 @@ from django.urls import reverse
 
 from .models import Topic, Entry
 from .forms import TopicForm, EntryForm
+
+from django.contrib.auth.decorators import login_required
 # Create your views here.
 
 def index(request):
     return render(request, 'index.html')
 
 
+@login_required
 def topic_list(request):
-    topics = Topic.objects.order_by('date_added')
+    topics = Topic.objects.filter(owner=request.user).order_by('date_added')
     content = {'topics': topics,}
     return render(request, 'topics_list.html', content)
 
-
+@login_required
 def topics(request, topic_id):
     topic = Topic.objects.get(id=topic_id)
     entries = topic.entry_set.order_by('-date_added')
     content = {'topic': topic, 'entries': entries}
     return render(request, 'topics.html', content)
 
+@login_required
 def new_topic(request):
     if request.method !='POST':
         form = TopicForm()
@@ -35,6 +39,7 @@ def new_topic(request):
 
     return render(request, 'new_topic.html', context)
 
+@login_required
 def new_entry(request, topic_id):
     topic = Topic.objects.get(id=topic_id)
 
@@ -50,6 +55,7 @@ def new_entry(request, topic_id):
     context = {'topic': topic, 'form': form}
     return render(request, 'new_entry.html', context)
 
+@login_required
 def edit_entry(request, entry_id):
     entry = Entry.objects.get(id=entry_id)
     topic = entry.topic
